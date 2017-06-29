@@ -122,6 +122,7 @@ require_relative './lexer'
   #//       from object.go:  there is a flattened list structure
   #//
   def flatten_objectlist(list)
+    list = handle_collisions(list)
     list.each_with_object({}) do |a, h|
       h[a.first] =
         case a.last
@@ -133,6 +134,21 @@ require_relative './lexer'
     end
   end
 
+  def handle_collisions(list)
+    nary = []
+    blocks = list.select {|d| d[1].is_a? Hash}.map {|d| [d[0], []]}.flatten(1)
+    blocks = Hash[*blocks]
+    list.each do |d|
+      if blocks.key?(d[0])
+        blocks[d[0]] << d[1]
+      else
+        nary << d
+      end
+    end
+
+    blocks.each {|k, v| nary << [k, v] }
+    nary
+  end
 
   def on_error(error_token_id, error_value, value_stack)
     header = "parse error found on value: #{error_value}"
