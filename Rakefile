@@ -14,5 +14,5 @@ end
 
 desc "Generate Parser"
 task :parser do
-  `racc ./assets/parse.y -o ./lib/parser.rb`
+  `racc ./assets/parse.y -o ./lib/hcl/parser.rb`
 end
